@@ -15,7 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dataBaseTest.cpp">
+    <ClCompile Include="SignInAndSignUp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SignIn.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
