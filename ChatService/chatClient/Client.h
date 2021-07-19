@@ -1,8 +1,12 @@
-#ifndef CHATROOM_CLIENT_H
-#define CHATROOM_CLIENT_H
+#ifndef _CLIENT_H_
+#define _CLIENT_H_
 
 #include <string>
-#include "Common.h"
+
+#include <winsock2.h>
+#include <stdio.h>
+#pragma comment(lib,"ws2_32.lib")
+#include <windows.h>
 
 using namespace std;
 
@@ -47,3 +51,6 @@ private:
 	//用户连接的服务器 IP + port
 	struct sockaddr_in serverAddr;
 };
+
+#endif
+

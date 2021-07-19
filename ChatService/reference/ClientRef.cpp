@@ -32,7 +32,7 @@ void Client::Connect() {
 	cout << "Connect Server: " << SERVER_IP << " : " << SERVER_PORT << endl;
 
 	// ´´½¨socket
-	sock = socket(PF_INET, SOCK_STREAM, 0);
+	sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sock < 0) {
 		perror("sock error");
 		exit(-1);

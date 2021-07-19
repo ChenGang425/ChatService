@@ -15,34 +15,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SignInAndSignUp.cpp">
+    <ClCompile Include="chatServer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SignIn.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Client.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SignUp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="SignIn.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SignUp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Comment.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

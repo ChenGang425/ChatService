@@ -1,14 +1,4 @@
 ﻿  SignIn.cpp
-e:\聊天系统\chatservice\chatservice\chatservice\chatclient\signin.cpp(35): error C2664: “size_t strlen(const char *)”: 无法将参数 1 从“std::string”转换为“const char *”
-  e:\聊天系统\chatservice\chatservice\chatservice\chatclient\signin.cpp(35): note: 没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
-e:\聊天系统\chatservice\chatservice\chatservice\chatclient\signin.cpp(38): error C2664: “size_t strlen(const char *)”: 无法将参数 1 从“std::string”转换为“const char *”
-  e:\聊天系统\chatservice\chatservice\chatservice\chatclient\signin.cpp(38): note: 没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
-e:\聊天系统\chatservice\chatservice\chatservice\chatclient\signin.cpp(40): error C2676: 二进制“+”:“std::string”不定义该运算符或到预定义运算符可接收的类型的转换
-e:\聊天系统\chatservice\chatservice\chatservice\chatclient\signin.cpp(40): error C2088: “+”: 对于 class 非法
-e:\聊天系统\chatservice\chatservice\chatservice\chatclient\signin.cpp(48): error C2440: “return”: 无法从“std::string”转换为“char *”
-  e:\聊天系统\chatservice\chatservice\chatservice\chatclient\signin.cpp(48): note: 没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
-e:\聊天系统\chatservice\chatservice\chatservice\chatclient\signin.cpp(124): error C2039: “Login”: 不是“Information”的成员
-  e:\聊天系统\chatservice\chatservice\chatservice\chatclient\signin.cpp(5): note: 参见“Information”的声明
-  SignInAndSignUp.cpp
-  test.cpp
+  main.cpp
   正在生成代码...
+  chatClient.vcxproj -> E:\聊天系统\chatService\ChatService\ChatService\x64\Debug\chatClient.exe
