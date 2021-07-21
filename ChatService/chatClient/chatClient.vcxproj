@@ -152,9 +152,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="test.cpp" />
     <ClCompile Include="SignIn.cpp" />
-    <ClCompile Include="SignInAndSignUp.cpp" />
     <ClCompile Include="SignUp.cpp" />
   </ItemGroup>
   <ItemGroup>

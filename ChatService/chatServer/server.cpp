@@ -106,8 +106,10 @@ void communicat(int idx) {
 			memset(&recvBuff, 0, sizeof(recvBuff));
 			memset(&recvMassage, 0, sizeof(recvMassage));//清空结构体
 			memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
-			recvBuff[r] = 0;
-			printf("%d >> %s\n", idx, recvBuff);
+			//recvBuff[r] = 0;
+			//printf("%d >> %s\n", idx, recvBuff);
+
+
 			// 服务器完成注册任务
 			if (recvBuff[0] == '1') {
 
