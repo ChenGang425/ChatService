@@ -34,6 +34,7 @@ using namespace std;
 //定义信息结构，在服务端和客户端之间传送
 struct Msg
 {
+	int signInOrSignOut;
 	string userName;
 	string password;
 	int zone;

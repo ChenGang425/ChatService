@@ -17,7 +17,7 @@ using namespace std;
 */
 
 SOCKET clientSocket;
-void recvServerAndShow();
+//void recvServerAndShow();
 
 int main()
 {
@@ -44,7 +44,7 @@ int main()
 	//3 获取到服务器协议地址簇
 	SOCKADDR_IN sAddr = { 0 };
 	sAddr.sin_family = AF_INET;// 必须和socket函数第一个参数一致
-	sAddr.sin_addr.S_un.S_addr = inet_addr("30.144.237.255");
+	sAddr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
 	//ip地址是一个整数  "" 字符串 字符串转整数
 	sAddr.sin_port = htons(9527);//小端转大端
 	// 0 - 65535  5000以上   20000以下比较稳妥
@@ -62,12 +62,13 @@ int main()
 	printf("连接服务器成功！\n");
 	printf("请选择：1.注册   2.登录\n");
 	int signInOrSignOut = 0;
-	scanf("%d", signInOrSignOut);
+	cin >> signInOrSignOut;
 
 	while (signInOrSignOut == 1) {
 		SignIn signIn = SignIn();
 		signIn.setinformation();
 		Msg massage;
+		massage.signInOrSignOut = 1;
 		massage.userName = signIn.getUsers();
 		massage.password = signIn.getPassword();
 		massage.zone = signIn.getZone();
@@ -94,37 +95,37 @@ int main()
 		}
 	}
 
-	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)recvServerAndShow,
-		NULL, NULL, NULL);
+	//CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)recvServerAndShow,
+	//	NULL, NULL, NULL);
 
-	//5 通信
+	////5 通信
 
-	char buff[1024];
-	while (1) {
-		memset(buff, 0, 1024);//清空
-		printf("请输入要发送给服务器的信息：");
-		scanf("%s", buff);
+	//char buff[1024];
+	//while (1) {
+	//	memset(buff, 0, 1024);//清空
+	//	printf("请输入要发送给服务器的信息：");
+	//	scanf("%s", buff);
 
-		send(clientSocket, buff, strlen(buff), NULL);
-	}
+	//	send(clientSocket, buff, strlen(buff), NULL);
+	//}
 
 
-	//8 断开连接
-	closesocket(clientSocket);
-	//9 清理协议信息
-	WSACleanup();
+	////8 断开连接
+	//closesocket(clientSocket);
+	////9 清理协议信息
+	//WSACleanup();
 }
 
-void recvServerAndShow() {
-	char buff[1024];
-	int r;
-	while (1) {
-		r = recv(clientSocket, buff, 1023, NULL);
-		if (r > 0) {
-			buff[r] = 0;
-			printf(">> %s\n", buff);
-		}
-	}
-}
+//void recvServerAndShow() {
+//	char buff[1024];
+//	int r;
+//	while (1) {
+//		r = recv(clientSocket, buff, 1023, NULL);
+//		if (r > 0) {
+//			buff[r] = 0;
+//			printf(">> %s\n", buff);
+//		}
+//	}
+//}
 
 

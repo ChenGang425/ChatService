@@ -1,70 +1,57 @@
 #include "DataBase.h"
 
 
-class DataBase {
-private:
-	string user = "root";
-	string pswd = "123456";
-	string host = "localhost";
-	string table = "game_chat_service";
-	unsigned int port = 3306;
-	MYSQL myCont;
-	MYSQL_RES *result = NULL;
-	MYSQL_ROW sql_row;
-	int res;
-	
+// connect
+//MYSQL * DataBase::sqlConnect() {
+//
+//};
 
-public:
-	// connect
-	MYSQL * sqlConnect() {
-		mysql_init(&myCont);
-		MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
-		return mySqlConnect;
-	};
+// 增
+int DataBase::insertDataBase(string name, string zone, string password) {
+	mysql_init(&myCont);
+	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
+	if (mySqlConnect) {
+		time_t curtime;
 
-	// 增
-	int insertDataBase(MYSQL * mySqlConnect, string name, string zone, string password) {
-		if (mySqlConnect) {
-			time_t curtime;
+		time(&curtime);
 
-			time(&curtime);
+		string registration_time(ctime(&curtime));
+		string sentenceStr = "insert into chat_info_table (name, zone, password, registration_time) values ( "
+			+ name + "," + zone + "," + password +","+ registration_time +")";
+		cout << sentenceStr;
+		char* sentenceChar;
 
-			string registration_time(ctime(&curtime));
-			string sentenceStr = "insert into chat_info_table (name, zone, password, registration_time) values ( "
-				+ name + "," + zone + "," + password + registration_time +")";
-			char* sentenceChar;
+		const int len = sentenceStr.length();
 
-			const int len = sentenceStr.length();
+		sentenceChar = new char[len + 1];
 
-			sentenceChar = new char[len + 1];
-
-			strcpy(sentenceChar, sentenceStr.c_str());
-			int flag = mysql_real_query(&myCont, sentenceChar, (unsigned int)strlen(sentenceChar));
-			if (flag) {
-				printf("Insert data failure!\n");
-				return 0;
-			}
-			else {
-				printf("Insert data success!\n");
-				return 1;
-			}
-		}
-		else {
-			cout << "数据库连接失败！" << endl;
+		strcpy(sentenceChar, sentenceStr.c_str());
+		int flag = mysql_query(&myCont, sentenceChar);
+		if (flag) {
+			printf("增加数据失败!\n");
 			return 0;
 		}
-	};
-
-	// 删
-	void deleteDataBase() {};
-
-	// 改
-	void updateDataBase() {};
-
-	// 查询该姓名是否已存在
-	void selectDataBase() {};
-
+		else {
+			printf("增加数据成功!\n");
+			return 1;
+		}
+	}
+	else {
+		cout << "数据库连接失败！" << endl;
+		return 0;
+	}
 };
+
+// 删
+void DataBase::deleteDataBase() {};
+
+// 改
+void DataBase::updateDataBase() {};
+
+// 查询该姓名是否已存在
+void DataBase::selectDataBase() {};
+
+
 
 //int main()
 //{

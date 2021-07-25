@@ -4,6 +4,7 @@
 #include <windows.h>
 
 #include "Comment.h"
+#include "DataBase.h"
 
 SOCKET cSocket[1024];
 int clientCount = 0;
@@ -35,7 +36,7 @@ int main()
 	//3 服务器协议地址簇
 	SOCKADDR_IN sAddr = { 0 };
 	sAddr.sin_family = AF_INET;// 必须和socket函数第一个参数一致
-	sAddr.sin_addr.S_un.S_addr = inet_addr("30.144.237.255");
+	sAddr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
 	//ip地址是一个整数  "" 字符串 字符串转整数
 	sAddr.sin_port = htons(9527);//小端转大端
 	// 0 - 65535  5000以上   20000以下比较稳妥
@@ -96,22 +97,23 @@ void communicat(int idx) {
 	char recvBuff[1024];
 	Msg recvMassage;
 
-	memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
+	memset(&recvBuff, 0, sizeof(recvBuff));
 
 	int r;
 	while (1) {
 		r = recv(cSocket[idx], recvBuff, 1023, NULL);
 
 		if (r > 0) {
-			memset(&recvBuff, 0, sizeof(recvBuff));
 			memset(&recvMassage, 0, sizeof(recvMassage));//清空结构体
 			memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
-			//recvBuff[r] = 0;
-			//printf("%d >> %s\n", idx, recvBuff);
+			recvBuff[r] = 0;
+			cout << recvMassage.userName << recvMassage.password << recvMassage.zone << endl;
 
 
 			// 服务器完成注册任务
-			if (recvBuff[0] == '1') {
+			if (recvMassage.signInOrSignOut == 1) {
+				DataBase database;
+				database.insertDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
 
 			}
 
