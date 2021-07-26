@@ -1,34 +1,28 @@
 #include "SignUp.h"
 
-class SignUp
-{
-private:
-	string users;//用户名
-	string password;//密码
 
-public:
-	SignUp(char* users = "1234567", char* password = "qwer1234")
-	{ //构造函数
-		this->users = users, this->password = password;
-	}
+SignUp::SignUp(){
+	massage.signInOrSignOut = 2;
+}
 
-	~SignUp() {} //析构函数
+SignUp::~SignUp() {} //析构函数
 
-	void deleteusers() {//用户名重复时删除该注册
-		users = "______";
-		password = "______";
-	}
+void SignUp::deleteusers() {//用户名重复时删除该注册
+}
 
-	int Login(string users, string password) {//登录
-		if (this->users == users && this->password == password) {
-			return 0;
-		}
-		else {
-			return 1;
-		}
-	}
+void SignUp::Login() {//登录
+	cout << "您好，请登录！" << endl;
+	cout << "请输入用户名：";
+	cin >> massage.userName;
+	cout << "请输入密码：";
+	cin >> massage.password;
+	cout << "请选择游戏大区：";
+	cin >> massage.zone;
+}
 
-};
+Msg SignUp::getMsg() {
+	return massage;
+}
 
 
 

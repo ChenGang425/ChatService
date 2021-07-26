@@ -32,10 +32,10 @@ public:
 	void deleteDataBase();
 
 	// 改
-	void updateDataBase();
+	int updateDataBase(string name);
 
 	// 查询该姓名是否已存在
-	void selectDataBase();
+	int selectDataBase(string name, string zone, string password);
 
 };
 

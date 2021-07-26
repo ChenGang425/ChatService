@@ -28,8 +28,6 @@ public:
 	string getPassword();
 
 	int getZone();
-
-	SignIn(string users, string password, int zone);
 	//返回用户名以判断注册的用户名是否重复
 };
 

@@ -1,11 +1,6 @@
 #include "DataBase.h"
 
 
-// connect
-//MYSQL * DataBase::sqlConnect() {
-//
-//};
-
 // 增
 int DataBase::insertDataBase(string name, string zone, string password) {
 	mysql_init(&myCont);
@@ -46,59 +41,81 @@ int DataBase::insertDataBase(string name, string zone, string password) {
 void DataBase::deleteDataBase() {};
 
 // 改
-void DataBase::updateDataBase() {};
+int DataBase::updateDataBase(string name) {
+	mysql_init(&myCont);
+	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
+	if (mySqlConnect) {
+		string sentenceStr = "update chat_info_table set online_status = 1 where name = " + name;
+		cout << sentenceStr;
+		char* sentenceChar;
 
-// 查询该姓名是否已存在
-void DataBase::selectDataBase() {};
+		const int len = sentenceStr.length();
 
+		sentenceChar = new char[len + 1];
 
+		strcpy(sentenceChar, sentenceStr.c_str());
+		int flag = mysql_query(&myCont, sentenceChar);
+		if (flag) {
+			printf("更改在线状态失败!\n");
+			return 0;
+		}
+		else {
+			printf("更改在线状态成功!\n");
+			return 1;
+		}
+	}
+	else {
+		cout << "数据库连接失败！" << endl;
+		return 0;
+	}
+};
 
-//int main()
-//{
+// 查
+int DataBase::selectDataBase(string name, string zone, string password) {
+	mysql_init(&myCont);
+	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
+	if (mySqlConnect) {
+		string sentenceStr = 
+			"select * from chat_info_table where name = " 
+			+ name + ", zone = " + zone + ", password = " + password; 
+		cout << sentenceStr;
+		char* sentenceChar;
 
-void init() {
-	const char user[] = "root";
-	const char pswd[] = "123456";
-	const char host[] = "localhost";
-	const char table[] = "game_chat_service";
-	unsigned int port = 3306;
-	MYSQL myCont;
-	MYSQL_RES *result = NULL;
-	MYSQL_ROW sql_row;
-	int res;
-	MYSQL *ms_conn = mysql_init(&myCont);
+		const int len = sentenceStr.length();
 
-	if (mysql_real_connect(&myCont, host, user, pswd, table, port, NULL, 0))
-	{
-		mysql_query(&myCont, "SET NAMES GBK"); //设置编码格式
-		res = mysql_query(&myCont, "select * from test");//查询
-		if (!res)
-		{
+		sentenceChar = new char[len + 1];
+
+		strcpy(sentenceChar, sentenceStr.c_str());
+		int flag = mysql_query(&myCont, sentenceChar);
+		if (flag) {
+			printf("查询用户数据失败!\n");
+			return 0;
+		}
+		else {
+			printf("查询用户数据成功!\n");
+
 			result = mysql_store_result(&myCont);
 			if (result)
 			{
-				while (sql_row = mysql_fetch_row(result))//获取具体的数据
-				{
-					cout << "BOOKNAME:" << sql_row[0] << endl;
-					cout << "    SIZE:" << sql_row[1] << endl;
+				sql_row = mysql_fetch_row(result);
+				if ((sizeof(sql_row) / sizeof(sql_row[0])) == 1) {
+					return 1;
+				}
+				else {
+					printf("查无此人!\n");
+					return 0;
 				}
 			}
-		}
-		else
-		{
-			cout << "query sql failed!" << endl;
+			else {
+				return 0;
+			}
 		}
 	}
-	else
-	{
-		cout << "connect failed!" << endl;
+	else {
+		cout << "数据库连接失败！" << endl;
+		return 0;
 	}
-	if (result != NULL)
-		mysql_free_result(result);
-	mysql_close(ms_conn), ms_conn = NULL;
+};
 
-	//system("pause");
-	//return 0;
-}
-//}
+
 

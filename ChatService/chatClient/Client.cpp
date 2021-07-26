@@ -64,21 +64,34 @@ int main()
 	int signInOrSignOut = 0;
 	cin >> signInOrSignOut;
 
+	// 注册
+	char sendBuff[1024];
+	char recvBuff[1024];
+	memset(sendBuff, 0, sizeof(sendBuff));
+	memset(recvBuff, 0, sizeof(recvBuff));
 	while (signInOrSignOut == 1) {
 		SignIn signIn = SignIn();
 		signIn.setinformation();
 		Msg massage;
+		//设置注册还是登录命令
 		massage.signInOrSignOut = 1;
-		massage.userName = signIn.getUsers();
-		massage.password = signIn.getPassword();
+
+		// 设置用户名
+		strcpy(massage.userName, signIn.getUsers().c_str());
+
+		// 设置用户密码
+		strcpy(massage.password, signIn.getPassword().c_str());
+
+		// 设置游戏区
 		massage.zone = signIn.getZone();
 
-		char sendBuff[500];
 		memset(sendBuff, 0, sizeof(sendBuff));
 		memcpy(sendBuff, &massage, sizeof(massage));
 		send(clientSocket, sendBuff, strlen(sendBuff), NULL);
 
-		char recvBuff[1024];
+		cout << massage.userName << massage.password << massage.zone << endl;
+
+
 		int r;
 		r = recv(clientSocket, recvBuff, 1023, NULL);
 
@@ -90,42 +103,66 @@ int main()
 			}
 		}
 		else {
-			printf("注册失败！");
-			signInOrSignOut = 0;
+			printf("注册失败,请重新输入！");
 		}
 	}
 
-	//CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)recvServerAndShow,
-	//	NULL, NULL, NULL);
+	// 登录
+	while (signInOrSignOut == 2) {
+		SignUp signUp = SignUp();
+		signUp.Login();
+		Msg massage;
+		memcpy(&massage, &signUp.getMsg(), sizeof(signUp.getMsg()));
+		
+		memset(sendBuff, 0, sizeof(sendBuff));
+		// 发送
+		send(clientSocket, sendBuff, strlen(sendBuff), NULL);
 
-	////5 通信
+		memset(recvBuff, 0, sizeof(recvBuff));
 
-	//char buff[1024];
-	//while (1) {
-	//	memset(buff, 0, 1024);//清空
-	//	printf("请输入要发送给服务器的信息：");
-	//	scanf("%s", buff);
+		if (recv(clientSocket, recvBuff, 1023, NULL)) {
+			recvBuff[r] = 0;
+			printf(">> %s\n", recvBuff);
+			if (strcmp(recvBuff, "登录成功！") > 0) {
+				signInOrSignOut = 0;
+			}
+		}
+		else {
+			printf("登录失败，请重新登录！");
+		}
+	}
 
-	//	send(clientSocket, buff, strlen(buff), NULL);
-	//}
+	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)recvServerAndShow,
+		NULL, NULL, NULL);
+
+	//5 通信
+
+	char buff[1024];
+	while (1) {
+		memset(buff, 0, 1024);//清空
+		printf("请输入要发送给服务器的信息：");
+		scanf("%s", buff);
+
+		send(clientSocket, buff, strlen(buff), NULL);
+	}
 
 
-	////8 断开连接
-	//closesocket(clientSocket);
-	////9 清理协议信息
-	//WSACleanup();
+	//8 断开连接
+	closesocket(clientSocket);
+	//9 清理协议信息
+	WSACleanup();
 }
 
-//void recvServerAndShow() {
-//	char buff[1024];
-//	int r;
-//	while (1) {
-//		r = recv(clientSocket, buff, 1023, NULL);
-//		if (r > 0) {
-//			buff[r] = 0;
-//			printf(">> %s\n", buff);
-//		}
-//	}
-//}
+void recvServerAndShow() {
+	char buff[1024];
+	int r;
+	while (1) {
+		r = recv(clientSocket, buff, 1023, NULL);
+		if (r > 0) {
+			buff[r] = 0;
+			printf(">> %s\n", buff);
+		}
+	}
+}
 
 

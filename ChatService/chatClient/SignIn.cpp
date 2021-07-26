@@ -1,11 +1,5 @@
 #include "SignIn.h"
 
-SignIn::SignIn(string users, string password, int zone)
-{ //¹¹Ôìº¯Êý
-	userName = users;
-	password = password;
-	zone = zone;
-}
 
 SignIn::SignIn() {}
 

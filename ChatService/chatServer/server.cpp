@@ -107,14 +107,32 @@ void communicat(int idx) {
 			memset(&recvMassage, 0, sizeof(recvMassage));//清空结构体
 			memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
 			recvBuff[r] = 0;
-			cout << recvMassage.userName << recvMassage.password << recvMassage.zone << endl;
+			cout << recvMassage.signInOrSignOut << recvMassage.zone << endl;
 
 
 			// 服务器完成注册任务
 			if (recvMassage.signInOrSignOut == 1) {
 				DataBase database;
-				database.insertDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
+				int flag = database.insertDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
+				if (flag) {
+					send(cSocket[idx], "注册成功！", sizeof("注册成功！"), 0);
+				}
+				else {
+					send(cSocket[idx], "注册失败！", sizeof("注册失败！"), 0);
+				}
 
+			}
+
+			// 服务器完成登录任务
+			if (recvMassage.signInOrSignOut == 2) {
+				DataBase database;
+				int flag = database.selectDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
+				if (flag && database.updateDataBase(recvMassage.userName)) {
+					send(cSocket[idx], "登录成功！", sizeof("登录成功！"), 0);
+				}
+				else {
+					send(cSocket[idx], "登录失败！", sizeof("登录失败！"), 0);
+				}
 			}
 
 			// 广播 发送给所有客户端
