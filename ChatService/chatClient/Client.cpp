@@ -17,7 +17,7 @@ using namespace std;
 */
 
 SOCKET clientSocket;
-//void recvServerAndShow();
+void recvServerAndShow();
 
 int main()
 {

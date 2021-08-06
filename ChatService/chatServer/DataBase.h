@@ -32,7 +32,7 @@ public:
 	void deleteDataBase();
 
 	// 改
-	int updateDataBase(string name);
+	int updateDataBase(string name, string status);
 
 	// 查询该姓名是否已存在
 	int selectDataBase(string name, string zone, string password);

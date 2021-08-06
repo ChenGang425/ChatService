@@ -41,11 +41,11 @@ int DataBase::insertDataBase(string name, string zone, string password) {
 void DataBase::deleteDataBase() {};
 
 // ¸Ä
-int DataBase::updateDataBase(string name) {
+int DataBase::updateDataBase(string name, string status) {
 	mysql_init(&myCont);
 	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
 	if (mySqlConnect) {
-		string sentenceStr = "update chat_info_table set online_status = 1 where name = " + name;
+		string sentenceStr = "update chat_info_table set online_status = "+ status +" where name = " + name;
 		cout << sentenceStr;
 		char* sentenceChar;
 

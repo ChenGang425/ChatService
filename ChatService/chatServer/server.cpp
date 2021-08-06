@@ -2,13 +2,15 @@
 #include <stdio.h>
 #pragma comment(lib,"ws2_32.lib")
 #include <windows.h>
+#include <list>
 
 #include "Comment.h"
 #include "DataBase.h"
+using namespace std;
 
 SOCKET cSocket[1024];
-int clientCount = 0;
 
+list<SOCKET> clientCount;
 void communicat(int idx);
 
 int main()
@@ -80,8 +82,42 @@ int main()
 			return -1;
 		}
 		printf("有客户端连接上服务器了：%s\n", inet_ntoa(cAddr.sin_addr));
-		clientCount++;
-		CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)communicat, (LPVOID)i, NULL, NULL);
+
+		char recvBuff[1024];
+		Msg recvMassage;
+
+		memset(&recvBuff, 0, sizeof(recvBuff));
+
+		if (recv(cSocket[i], recvBuff, 1023, NULL)) {
+			memset(&recvMassage, 0, sizeof(recvMassage));//清空结构体
+			memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
+			if (recvMassage.signInOrSignOut == 1) {
+				DataBase database;
+				int flag = database.insertDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
+				if (flag) {
+					send(cSocket[i], "注册成功！", sizeof("注册成功！"), 0);
+				}
+				else {
+					send(cSocket[i], "注册失败！", sizeof("注册失败！"), 0);
+					closesocket(cSocket[i]);
+				}
+			}
+
+			if (recvMassage.signInOrSignOut == 2) {
+				DataBase database;
+				int flag = database.selectDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
+				if (flag && database.updateDataBase(recvMassage.userName, "1")) {
+					send(cSocket[i], "登录成功！", sizeof("登录成功！"), 0);
+					clientCount.push_back(cSocket[i]);
+					CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)communicat, (LPVOID)i, NULL, NULL);
+				}
+				else {
+					send(cSocket[i], "登录失败！", sizeof("登录失败！"), 0);
+					closesocket(cSocket[i]);
+				}
+			}
+		}
+
 	}
 
 
@@ -96,9 +132,7 @@ void communicat(int idx) {
 	//7 通信
 	char recvBuff[1024];
 	Msg recvMassage;
-
 	memset(&recvBuff, 0, sizeof(recvBuff));
-
 	int r;
 	while (1) {
 		r = recv(cSocket[idx], recvBuff, 1023, NULL);
@@ -106,38 +140,62 @@ void communicat(int idx) {
 		if (r > 0) {
 			memset(&recvMassage, 0, sizeof(recvMassage));//清空结构体
 			memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
-			recvBuff[r] = 0;
-			cout << recvMassage.signInOrSignOut << recvMassage.zone << endl;
-
-
-			// 服务器完成注册任务
-			if (recvMassage.signInOrSignOut == 1) {
-				DataBase database;
-				int flag = database.insertDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
-				if (flag) {
-					send(cSocket[idx], "注册成功！", sizeof("注册成功！"), 0);
-				}
-				else {
-					send(cSocket[idx], "注册失败！", sizeof("注册失败！"), 0);
-				}
-
-			}
-
-			// 服务器完成登录任务
-			if (recvMassage.signInOrSignOut == 2) {
-				DataBase database;
-				int flag = database.selectDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
-				if (flag && database.updateDataBase(recvMassage.userName)) {
-					send(cSocket[idx], "登录成功！", sizeof("登录成功！"), 0);
-				}
-				else {
-					send(cSocket[idx], "登录失败！", sizeof("登录失败！"), 0);
-				}
-			}
+			//recvBuff[r] = 0;
+			//cout << recvMassage.signInOrSignOut << recvMassage.zone << endl;
 
 			// 广播 发送给所有客户端
-			for (int i = 0; i < clientCount; i++) {
-				send(cSocket[i], recvBuff, r, NULL);
+			for (list<SOCKET>::const_iterator it = clientCount.begin(); it != clientCount.end(); it++) {
+				send(*it, recvBuff, r, NULL);
+			}
+		}
+	}
+}
+
+void clientSignIn(int idx) {
+	// 服务器完成注册任务
+	char recvBuff[1024];
+	Msg recvMassage;
+
+	memset(&recvBuff, 0, sizeof(recvBuff));
+
+	if (recv(cSocket[idx], recvBuff, 1023, NULL)) {
+		memset(&recvMassage, 0, sizeof(recvMassage));//清空结构体
+		memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
+		if (recvMassage.signInOrSignOut == 1) {
+			DataBase database;
+			int flag = database.insertDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
+			if (flag) {
+				send(cSocket[idx], "注册成功！", sizeof("注册成功！"), 0);
+			}
+			else {
+				send(cSocket[idx], "注册失败！", sizeof("注册失败！"), 0);
+			}
+		}
+	}
+
+}
+
+void clientSignUp(int idx) {
+	// 服务器完成登录任务
+	char recvBuff[1024];
+	Msg recvMassage;
+
+	memset(&recvBuff, 0, sizeof(recvBuff));
+
+	int r;
+	r = recv(cSocket[idx], recvBuff, 1023, NULL);
+
+	if (r > 0) {
+		memset(&recvMassage, 0, sizeof(recvMassage));//清空结构体
+		memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
+		if (recvMassage.signInOrSignOut == 2) {
+			DataBase database;
+			int flag = database.selectDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
+			if (flag && database.updateDataBase(recvMassage.userName, "1")) {
+				send(cSocket[idx], "登录成功！", sizeof("登录成功！"), 0);
+			}
+			else {
+				send(cSocket[idx], "登录失败！", sizeof("登录失败！"), 0);
 			}
 		}
 	}
