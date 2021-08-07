@@ -85,9 +85,13 @@ int main()
 		// 设置游戏区
 		massage.zone = signIn.getZone();
 
-		memset(sendBuff, 0, sizeof(sendBuff));
-		memcpy(sendBuff, &massage, sizeof(massage));
-		send(clientSocket, sendBuff, strlen(sendBuff), NULL);
+		//将massage中的内容复制到sendBuff中
+		//memset(sendBuff, 0, sizeof(sendBuff));
+		//memcpy(sendBuff, &massage, sizeof(massage));
+
+		//发送
+		//send(clientSocket, sendBuff, strlen(sendBuff), NULL);
+		send(clientSocket, (char*)&massage, sizeof(massage), NULL);
 
 		cout << massage.userName << massage.password << massage.zone << endl;
 
@@ -98,7 +102,7 @@ int main()
 		if (r > 0) {
 			recvBuff[r] = 0;
 			printf(">> %s\n", recvBuff);
-			if (strcmp(recvBuff, "注册成功！") > 0) {
+			if (strcmp(recvBuff, "注册成功！") == 0) {
 				signInOrSignOut = 2;
 			}
 		}
@@ -114,16 +118,19 @@ int main()
 		Msg massage;
 		memcpy(&massage, &signUp.getMsg(), sizeof(signUp.getMsg()));
 		
-		memset(sendBuff, 0, sizeof(sendBuff));
+		//memset(sendBuff, 0, sizeof(sendBuff));
 		// 发送
-		send(clientSocket, sendBuff, strlen(sendBuff), NULL);
+		send(clientSocket, (char*)&massage, sizeof(massage), NULL);
 
 		memset(recvBuff, 0, sizeof(recvBuff));
 
-		if (recv(clientSocket, recvBuff, 1023, NULL)) {
+		int r;
+		r = recv(clientSocket, recvBuff, 1023, NULL);
+
+		if (r > 0) {
 			recvBuff[r] = 0;
 			printf(">> %s\n", recvBuff);
-			if (strcmp(recvBuff, "登录成功！") > 0) {
+			if (strcmp(recvBuff, "登录成功！") == 0) {
 				signInOrSignOut = 0;
 			}
 		}

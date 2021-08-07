@@ -6,13 +6,13 @@ int DataBase::insertDataBase(string name, string zone, string password) {
 	mysql_init(&myCont);
 	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
 	if (mySqlConnect) {
-		time_t curtime;
+		SYSTEMTIME sys;
+		GetLocalTime(&sys);
 
-		time(&curtime);
-
-		string registration_time(ctime(&curtime));
-		string sentenceStr = "insert into chat_info_table (name, zone, password, registration_time) values ( "
-			+ name + "," + zone + "," + password +","+ registration_time +")";
+		string registration_time = to_string(sys.wYear) + "-" + to_string(sys.wMonth) + "-" + to_string(sys.wDay) +
+			" " + to_string(sys.wHour) + ":" + to_string(sys.wMinute) + ":" + to_string(sys.wSecond) + "." + to_string(sys.wMilliseconds);;
+		string sentenceStr = "INSERT INTO chat_info_table (name, zone, password, registration_time, online_status, blacklist) VALUES ('"
+			+ name + "' ,'" + zone + "' ,'" + password +"' ,'"+ registration_time +"', 0, 0)";
 		cout << sentenceStr;
 		char* sentenceChar;
 
@@ -45,7 +45,7 @@ int DataBase::updateDataBase(string name, string status) {
 	mysql_init(&myCont);
 	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
 	if (mySqlConnect) {
-		string sentenceStr = "update chat_info_table set online_status = "+ status +" where name = " + name;
+		string sentenceStr = "update chat_info_table set online_status = "+ status +" where name = '" + name + "'";
 		cout << sentenceStr;
 		char* sentenceChar;
 
@@ -76,8 +76,8 @@ int DataBase::selectDataBase(string name, string zone, string password) {
 	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
 	if (mySqlConnect) {
 		string sentenceStr = 
-			"select * from chat_info_table where name = " 
-			+ name + ", zone = " + zone + ", password = " + password; 
+			"select * from chat_info_table where name = '" 
+			+ name + "' and zone = '" + zone + "' and password = '" + password + "'"; 
 		cout << sentenceStr;
 		char* sentenceChar;
 
@@ -99,6 +99,7 @@ int DataBase::selectDataBase(string name, string zone, string password) {
 			{
 				sql_row = mysql_fetch_row(result);
 				if ((sizeof(sql_row) / sizeof(sql_row[0])) == 1) {
+					cout << "用户登录请求通过" << endl;
 					return 1;
 				}
 				else {

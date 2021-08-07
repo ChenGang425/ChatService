@@ -89,8 +89,12 @@ int main()
 		memset(&recvBuff, 0, sizeof(recvBuff));
 
 		if (recv(cSocket[i], recvBuff, 1023, NULL)) {
-			memset(&recvMassage, 0, sizeof(recvMassage));//清空结构体
+			// 清空结构体
+			memset(&recvMassage, 0, sizeof(recvMassage));
+
+			// 复制recvBuff到recvMassage
 			memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
+
 			if (recvMassage.signInOrSignOut == 1) {
 				DataBase database;
 				int flag = database.insertDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
