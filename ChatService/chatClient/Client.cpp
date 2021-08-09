@@ -6,6 +6,7 @@
 #include "SignIn.h"
 #include "SignUp.h"
 #include "Comment.h"
+#include "DataBaseClient.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ using namespace std;
 
 SOCKET clientSocket;
 void recvServerAndShow();
+DataBaseClient dataBaseClient;
 
 int main()
 {
@@ -59,15 +61,13 @@ int main()
 		WSACleanup();
 		return -1;
 	}
-	printf("连接服务器成功！\n");
-	printf("请选择：1.注册   2.登录\n");
+	cout << "连接服务器成功！" << endl;
+	cout << "请选择：1.注册   2.登录" << endl;
 	int signInOrSignOut = 0;
 	cin >> signInOrSignOut;
 
 	// 注册
-	char sendBuff[1024];
 	char recvBuff[1024];
-	memset(sendBuff, 0, sizeof(sendBuff));
 	memset(recvBuff, 0, sizeof(recvBuff));
 	while (signInOrSignOut == 1) {
 		SignIn signIn = SignIn();
@@ -85,16 +85,10 @@ int main()
 		// 设置游戏区
 		massage.zone = signIn.getZone();
 
-		//将massage中的内容复制到sendBuff中
-		//memset(sendBuff, 0, sizeof(sendBuff));
-		//memcpy(sendBuff, &massage, sizeof(massage));
-
 		//发送
-		//send(clientSocket, sendBuff, strlen(sendBuff), NULL);
 		send(clientSocket, (char*)&massage, sizeof(massage), NULL);
 
 		cout << massage.userName << massage.password << massage.zone << endl;
-
 
 		int r;
 		r = recv(clientSocket, recvBuff, 1023, NULL);
@@ -107,18 +101,17 @@ int main()
 			}
 		}
 		else {
-			printf("注册失败,请重新输入！");
+			cout << "注册失败,请重新输入！" << endl;
 		}
 	}
 
 	// 登录
+	Msg massage;
 	while (signInOrSignOut == 2) {
 		SignUp signUp = SignUp();
 		signUp.Login();
-		Msg massage;
 		memcpy(&massage, &signUp.getMsg(), sizeof(signUp.getMsg()));
 		
-		//memset(sendBuff, 0, sizeof(sendBuff));
 		// 发送
 		send(clientSocket, (char*)&massage, sizeof(massage), NULL);
 
@@ -135,7 +128,7 @@ int main()
 			}
 		}
 		else {
-			printf("登录失败，请重新登录！");
+			cout << "登录失败，请重新登录！" << endl;
 		}
 	}
 
@@ -143,16 +136,25 @@ int main()
 		NULL, NULL, NULL);
 
 	//5 通信
+	Session clientSession;
+	int clientWork = 1;
+	while (clientWork) {
+		strcpy(clientSession.userName, massage.userName);
+		clientSession.zone = massage.zone;
+		cout << "请输入你想要发送的信息:" << endl;
+		cin >> clientSession.clientChat;
 
-	char buff[1024];
-	while (1) {
-		memset(buff, 0, 1024);//清空
-		printf("请输入要发送给服务器的信息：");
-		scanf("%s", buff);
+		if (strcmp(clientSession.clientChat, "查询在线用户") == 0) {
+			dataBaseClient.selectOnlineClient();
+		} else {
+			send(clientSocket, (char *)&clientSession, sizeof(clientSession), NULL);
 
-		send(clientSocket, buff, strlen(buff), NULL);
+			// 客户输出exit,退出
+			if (strcmp(clientSession.clientChat, "EXIT") == 0) {
+				clientWork = 0;
+			}
+		}
 	}
-
 
 	//8 断开连接
 	closesocket(clientSocket);
@@ -162,12 +164,15 @@ int main()
 
 void recvServerAndShow() {
 	char buff[1024];
+	Session clientSession;
 	int r;
 	while (1) {
+		memset(buff, 0, sizeof(buff));
+		memset(&clientSession, 0, sizeof(clientSession));
 		r = recv(clientSocket, buff, 1023, NULL);
 		if (r > 0) {
-			buff[r] = 0;
-			printf(">> %s\n", buff);
+			memcpy(&clientSession, buff, sizeof(clientSession));
+			cout << clientSession.userName << ">>" << clientSession.clientChat << endl;
 		}
 	}
 }

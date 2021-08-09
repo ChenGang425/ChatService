@@ -23,7 +23,6 @@ int main()
 		mysql_query(&myCont, "SET NAMES GBK"); //设置编码格式
 
 		//查询
-		/*
 		res = mysql_query(&myCont, "select * from test");
 		if (!res)
 		{
@@ -41,10 +40,10 @@ int main()
 		{
 			cout << "query sql failed!" << endl;
 		}
-		*/
+		
 
 		// 插入
-		res = mysql_query(&myCont, "INSERT INTO test VALUES ('NIHAO',6.0)");
+		//res = mysql_query(&myCont, "INSERT INTO test VALUES ('NIHAO',6.0)");
 
 	}
 	else

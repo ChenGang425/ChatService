@@ -1,3 +1,2 @@
 ﻿  dataBaseTest.cpp
-e:\聊天系统\chatservice\chatservice\chatservice\databsae\databasetest.cpp(18): warning C4101: “sql_row”: 未引用的局部变量
   DataBsae.vcxproj -> E:\聊天系统\chatService\ChatService\ChatService\x64\Debug\DataBsae.exe

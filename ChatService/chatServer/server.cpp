@@ -12,6 +12,8 @@ SOCKET cSocket[1024];
 
 list<SOCKET> clientCount;
 void communicat(int idx);
+list<SOCKET> oneZoneClient;
+list<SOCKET> twoZoneClient;
 
 int main()
 {
@@ -85,7 +87,7 @@ int main()
 
 		char recvBuff[1024];
 		Msg recvMassage;
-
+		Session sendSession;
 		memset(&recvBuff, 0, sizeof(recvBuff));
 
 		if (recv(cSocket[i], recvBuff, 1023, NULL)) {
@@ -112,7 +114,25 @@ int main()
 				int flag = database.selectDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
 				if (flag && database.updateDataBase(recvMassage.userName, "1")) {
 					send(cSocket[i], "登录成功！", sizeof("登录成功！"), 0);
+
+					//通知所有客户端有新客户进来了
+					string newClientStr = "大家好，我进聊天室了，私聊号码为:" + to_string(i);
+					//char* newClientChar = new char[newClientStr.length() + 1];
+					strcpy(sendSession.clientChat, newClientStr.c_str());
+					strcpy(sendSession.userName, recvMassage.userName);
+					for (list<SOCKET>::const_iterator it = clientCount.begin(); it != clientCount.end(); it++) {
+						send(*it, (char*)&sendSession, sizeof(sendSession), 0);
+					}
+
+					// 在全服添加该用户
 					clientCount.push_back(cSocket[i]);
+					// 在全区添加该用户
+					if (recvMassage.zone == 1) {
+						oneZoneClient.push_back(cSocket[i]);
+					}
+					else {
+						twoZoneClient.push_back(cSocket[i]);
+					}
 					CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)communicat, (LPVOID)i, NULL, NULL);
 				}
 				else {
@@ -124,8 +144,6 @@ int main()
 
 	}
 
-
-
 	//8 断开连接
 	closesocket(sSocket);
 	//9 清理协议信息
@@ -135,25 +153,75 @@ int main()
 void communicat(int idx) {
 	//7 通信
 	char recvBuff[1024];
-	Msg recvMassage;
+	Session serverSession;
 	memset(&recvBuff, 0, sizeof(recvBuff));
 	int r;
 	while (1) {
 		r = recv(cSocket[idx], recvBuff, 1023, NULL);
 
 		if (r > 0) {
-			memset(&recvMassage, 0, sizeof(recvMassage));//清空结构体
-			memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
-			//recvBuff[r] = 0;
-			//cout << recvMassage.signInOrSignOut << recvMassage.zone << endl;
+			memset(&serverSession, 0, sizeof(serverSession));//清空结构体
+			memcpy(&serverSession, recvBuff, sizeof(serverSession));
 
-			// 广播 发送给所有客户端
-			for (list<SOCKET>::const_iterator it = clientCount.begin(); it != clientCount.end(); it++) {
-				send(*it, recvBuff, r, NULL);
+			if (strcmp(serverSession.clientChat, "EXIT") == 0) {
+				DataBase database;
+				database.updateDataBase(serverSession.userName, "0");
+
+				// 广播 发送给所有客户端该用户下线通知
+				string offlineStr(serverSession.userName);
+				offlineStr = offlineStr + "下线了！";
+				strcpy(serverSession.clientChat, offlineStr.c_str());
+
+				// 在全服中删除该用户
+				clientCount.remove(cSocket[idx]);
+				// 在大区中删除该用户
+				if (serverSession.zone == 1) {
+					oneZoneClient.remove(cSocket[idx]);
+				}
+				else {
+					twoZoneClient.remove(cSocket[idx]);
+				}
+				for (list<SOCKET>::const_iterator it = clientCount.begin(); it != clientCount.end(); it++) {
+					send(*it, (char*)&serverSession, sizeof(serverSession), 0);
+				}
+			} 
+
+			// 私聊
+			else if (serverSession.clientChat[0] == '/') {
+				send(cSocket[serverSession.clientChat[1] - '0'], (char*)&serverSession, sizeof(serverSession), 0);
+			}
+
+			// 广播 大区
+			else if (serverSession.clientChat[0] == '#') {
+				if (serverSession.zone == 1) {
+					for (list<SOCKET>::const_iterator it = oneZoneClient.begin(); it != oneZoneClient.end(); it++) {
+						send(*it, (char*)&serverSession, sizeof(serverSession), 0);
+					}
+				}
+				else {
+					for (list<SOCKET>::const_iterator it = twoZoneClient.begin(); it != twoZoneClient.end(); it++) {
+						send(*it, (char*)&serverSession, sizeof(serverSession), 0);
+					}
+				}
+
+			}
+
+			// 广播 全服
+			else {
+				for (list<SOCKET>::const_iterator it = clientCount.begin(); it != clientCount.end(); it++) {
+					send(*it, (char*)&serverSession, sizeof(serverSession), 0);
+				}
 			}
 		}
 	}
 }
+
+
+
+
+
+
+
 
 void clientSignIn(int idx) {
 	// 服务器完成注册任务
