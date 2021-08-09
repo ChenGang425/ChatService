@@ -117,7 +117,6 @@ int main()
 
 					//通知所有客户端有新客户进来了
 					string newClientStr = "大家好，我进聊天室了，私聊号码为:" + to_string(i);
-					//char* newClientChar = new char[newClientStr.length() + 1];
 					strcpy(sendSession.clientChat, newClientStr.c_str());
 					strcpy(sendSession.userName, recvMassage.userName);
 					for (list<SOCKET>::const_iterator it = clientCount.begin(); it != clientCount.end(); it++) {
