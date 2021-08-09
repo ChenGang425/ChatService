@@ -118,6 +118,49 @@ int DataBase::selectDataBase(string name, string zone, string password) {
 	}
 };
 
+// 查询该用户是否在黑名单
+int DataBase::selectBlackList(string name) {
+	mysql_init(&myCont);
+	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
+	if (mySqlConnect) {
+		string sentenceStr = "select blacklist from chat_info_table where name = '" + name + "'";
+
+		cout << sentenceStr;
+		char* sentenceChar = new char[sentenceStr.length() + 1];
+
+		strcpy(sentenceChar, sentenceStr.c_str());
+		int flag = mysql_query(&myCont, sentenceChar);
+		if (flag) {
+			printf("查询用户黑名单失败!\n");
+			return 0;
+		}
+		else {
+			printf("查询用户黑名单成功!\n");
+
+			result = mysql_store_result(&myCont);
+			if (result)
+			{
+				sql_row = mysql_fetch_row(result);
+				if (strcmp(sql_row[0], "0") == 0) {
+					cout << "该用户不在黑名单上" << endl;
+					return 1;
+				}
+				else {
+					cout << "该用户在黑名单上" << endl;
+					return 0;
+				}
+			}
+			else {
+				return 0;
+			}
+		}
+	}
+	else {
+		cout << "数据库连接失败！" << endl;
+		return 0;
+	}
+}
+
 
 
 

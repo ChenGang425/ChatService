@@ -133,6 +133,7 @@ int main()
 					else {
 						twoZoneClient.push_back(cSocket[i]);
 					}
+
 					CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)communicat, (LPVOID)i, NULL, NULL);
 				}
 				else {
@@ -141,7 +142,6 @@ int main()
 				}
 			}
 		}
-
 	}
 
 	//8 断开连接
@@ -162,7 +162,9 @@ void communicat(int idx) {
 		if (r > 0) {
 			memset(&serverSession, 0, sizeof(serverSession));//清空结构体
 			memcpy(&serverSession, recvBuff, sizeof(serverSession));
+			DataBase dataBase;
 
+			//判断用户是否要退出
 			if (strcmp(serverSession.clientChat, "EXIT") == 0) {
 				DataBase database;
 				database.updateDataBase(serverSession.userName, "0");
@@ -184,32 +186,35 @@ void communicat(int idx) {
 				for (list<SOCKET>::const_iterator it = clientCount.begin(); it != clientCount.end(); it++) {
 					send(*it, (char*)&serverSession, sizeof(serverSession), 0);
 				}
-			} 
-
-			// 私聊
-			else if (serverSession.clientChat[0] == '/') {
-				send(cSocket[serverSession.clientChat[1] - '0'], (char*)&serverSession, sizeof(serverSession), 0);
 			}
 
-			// 广播 大区
-			else if (serverSession.clientChat[0] == '#') {
-				if (serverSession.zone == 1) {
-					for (list<SOCKET>::const_iterator it = oneZoneClient.begin(); it != oneZoneClient.end(); it++) {
-						send(*it, (char*)&serverSession, sizeof(serverSession), 0);
-					}
+			// 判断用户是否在黑名单上
+			if (dataBase.selectBlackList(serverSession.userName) == 1) {
+
+				// 私聊
+				if (serverSession.clientChat[0] == '/') {
+					send(cSocket[serverSession.clientChat[1] - '0'], (char*)&serverSession, sizeof(serverSession), 0);
 				}
+
+				// 广播 大区
+				else if (serverSession.clientChat[0] == '#') {
+					if (serverSession.zone == 1) {
+						for (list<SOCKET>::const_iterator it = oneZoneClient.begin(); it != oneZoneClient.end(); it++) {
+							send(*it, (char*)&serverSession, sizeof(serverSession), 0);
+						}
+					}
+					else {
+						for (list<SOCKET>::const_iterator it = twoZoneClient.begin(); it != twoZoneClient.end(); it++) {
+							send(*it, (char*)&serverSession, sizeof(serverSession), 0);
+						}
+					}
+
+				}
+				// 广播 全服
 				else {
-					for (list<SOCKET>::const_iterator it = twoZoneClient.begin(); it != twoZoneClient.end(); it++) {
+					for (list<SOCKET>::const_iterator it = clientCount.begin(); it != clientCount.end(); it++) {
 						send(*it, (char*)&serverSession, sizeof(serverSession), 0);
 					}
-				}
-
-			}
-
-			// 广播 全服
-			else {
-				for (list<SOCKET>::const_iterator it = clientCount.begin(); it != clientCount.end(); it++) {
-					send(*it, (char*)&serverSession, sizeof(serverSession), 0);
 				}
 			}
 		}

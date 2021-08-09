@@ -6,7 +6,7 @@ e:\聊天系统\chatservice\chatservice\chatservice\chatserver\database.cpp(52):
 e:\聊天系统\chatservice\chatservice\chatservice\chatserver\database.cpp(84): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
 e:\聊天系统\chatservice\chatservice\chatservice\chatserver\database.cpp(84): warning C4267: “初始化”: 从“size_t”转换到“const int”，可能丢失数据
   server.cpp
-e:\聊天系统\chatservice\chatservice\chatservice\chatserver\server.cpp(136): warning C4312: “类型强制转换”: 从“int”转换到更大的“LPVOID”
+e:\聊天系统\chatservice\chatservice\chatservice\chatserver\server.cpp(137): warning C4312: “类型强制转换”: 从“int”转换到更大的“LPVOID”
 e:\聊天系统\chatservice\chatservice\chatservice\chatserver\server.cpp(43): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
   c:\program files (x86)\windows kits\10\include\10.0.17763.0\um\winsock2.h(1831): note: 参见“inet_addr”的声明
 e:\聊天系统\chatservice\chatservice\chatservice\chatserver\server.cpp(86): warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings

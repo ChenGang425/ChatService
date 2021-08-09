@@ -35,6 +35,9 @@ public:
 	// 查询该姓名是否已存在
 	int selectDataBase(string name, string zone, string password);
 
+	// 查询该用户是否在黑名单
+	int selectBlackList(string name);
+
 };
 
 
