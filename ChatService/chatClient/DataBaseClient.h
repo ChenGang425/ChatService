@@ -25,6 +25,8 @@ public:
 	void selectOnlineClient();
 
 	void selectUserInf(string searchUserInf);
+
+	void updateBlackList(string blackListUser, string inOrOut);
 };
 
 

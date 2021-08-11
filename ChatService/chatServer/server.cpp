@@ -8,20 +8,20 @@ int main()
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (LOBYTE(wsaData.wVersion) != 2 ||
 		HIBYTE(wsaData.wVersion) != 2) {
-		printf("确定协议版本失败:%d\n", GetLastError());
+		cout << "确定协议版本失败:" << GetLastError() << endl;
 		return -1;
 	}
-	printf("确定协议版本成功！\n");
+	cout << "确定协议版本成功！" << endl;
 
 	//2 创建socket
 	SOCKET sSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (SOCKET_ERROR == sSocket) {
-		printf("创建socket失败：%d\n", GetLastError());
+		cout << "创建socket失败：" << GetLastError() << endl;
 		// 清理协议信息
 		WSACleanup();
 		return -1;
 	}
-	printf("创建socket成功！ \n");
+	cout << "创建socket成功！" << endl;
 
 	//3 服务器协议地址簇
 	SOCKADDR_IN sAddr = { 0 };
@@ -34,26 +34,26 @@ int main()
 	//4 绑定
 	int r = bind(sSocket, (sockaddr*)&sAddr, sizeof sAddr);
 	if (-1 == r) {
-		printf("绑定失败：%d\n", GetLastError());
+		cout << "绑定失败：" << GetLastError() << endl;
 		// 断开连接
 		closesocket(sSocket);
 		// 清理协议信息
 		WSACleanup();
 		return -1;
 	}
-	printf("绑定成功！ \n");
+	cout << "绑定成功！" << endl;
 
 	//5 监听
 	r = listen(sSocket, 10);
 	if (-1 == r) {
-		printf("监听失败：%d\n", GetLastError());
+		cout << "监听失败：" << GetLastError() << endl;
 		// 断开连接
 		closesocket(sSocket);
 		// 清理协议信息
 		WSACleanup();
 		return -1;
 	}
-	printf("监听成功！ \n");
+	cout << "监听成功！" << endl;
 
 
 	//6 接受客户端连接
@@ -62,14 +62,14 @@ int main()
 	for (int i = 0; i < 1024; i++) {
 		cSocket[i] = accept(sSocket, (sockaddr*)&cAddr, &cAddrLen);
 		if (SOCKET_ERROR == cSocket[i]) {
-			printf("网络奔溃：%d\n", GetLastError());
+			cout << "网络奔溃：" << GetLastError() << endl;
 			// 断开连接
 			closesocket(sSocket);
 			// 清理协议信息
 			WSACleanup();
 			return -1;
 		}
-		printf("有客户端连接上服务器了：%s\n", inet_ntoa(cAddr.sin_addr));
+		cout << "有客户端连接上服务器了：" << inet_ntoa(cAddr.sin_addr) << endl;
 
 		char recvBuff[1024];
 		Msg recvMassage;
@@ -88,10 +88,14 @@ int main()
 				int flag = database.insertDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
 				if (flag) {
 					send(cSocket[i], "注册成功！", sizeof("注册成功！"), 0);
+					// 清空结构体
+					memset(&recvMassage, 0, sizeof(recvMassage));
+					recv(cSocket[i], (char*)&recvMassage, sizeof(recvMassage), NULL);
 				}
 				else {
 					send(cSocket[i], "注册失败！", sizeof("注册失败！"), 0);
 					closesocket(cSocket[i]);
+					break;
 				}
 			}
 

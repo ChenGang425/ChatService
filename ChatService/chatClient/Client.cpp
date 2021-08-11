@@ -126,6 +126,13 @@ void Client::communication() {
 		strcpy(clientSession.userName, massage.userName);
 		clientSession.zone = massage.zone;
 		cout << "请输入你想要发送的信息:" << endl;
+		cout << "想要私聊请输入：/ + 私聊号码 + 私聊内容" << endl;
+		cout << "想要发大区请输入：# + 内容" << endl;
+		cout << "想查询在线用户请输入：查询在线用户" << endl;
+		cout << "想查询玩家信息请输入：查询玩家信息" << endl;
+		if (strcmp(clientSession.userName, "chengang") == 0) {
+			cout << "想管理黑名单请输入：设置黑名单" << endl;
+		}
 		cin >> clientSession.clientChat;
 
 		if (strcmp(clientSession.clientChat, "查询在线用户") == 0) {
@@ -137,6 +144,17 @@ void Client::communication() {
 			cout << "请输入想要查询的玩家名称：" << endl;
 			cin >> searchUserInf;
 			dataBaseClient.selectUserInf(searchUserInf);
+		}
+		else if (strcmp(clientSession.clientChat, "设置黑名单") == 0 && 
+			strcmp(clientSession.userName, "chengang") == 0) {
+			string blackListUser;
+			string inOrOut;
+			cout << "想要将哪位玩家拉入或拉出黑名单：" << endl;
+			cin >> blackListUser;
+			cout << "想要将他拉入还是黑名单还是拉出黑名单：" << endl;
+			cout << "0.拉出   " << "1. 拉入" << endl;
+			cin >> inOrOut;
+			dataBaseClient.updateBlackList(blackListUser, inOrOut);
 		}
 		else {
 			send(clientSocket, (char *)&clientSession, sizeof(clientSession), NULL);

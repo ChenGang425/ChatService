@@ -23,11 +23,11 @@ int DataBase::insertDataBase(string name, string zone, string password) {
 		strcpy(sentenceChar, sentenceStr.c_str());
 		int flag = mysql_query(&myCont, sentenceChar);
 		if (flag) {
-			printf("增加数据失败!\n");
+			cout << "增加数据失败!" << endl;
 			return 0;
 		}
 		else {
-			printf("增加数据成功!\n");
+			cout << "增加数据成功!" << endl;
 			return 1;
 		}
 	}
@@ -56,11 +56,11 @@ int DataBase::updateDataBase(string name, string status) {
 		strcpy(sentenceChar, sentenceStr.c_str());
 		int flag = mysql_query(&myCont, sentenceChar);
 		if (flag) {
-			printf("更改在线状态失败!\n");
+			cout << "更改在线状态失败!" << endl;
 			return 0;
 		}
 		else {
-			printf("更改在线状态成功!\n");
+			cout << "更改在线状态成功!" << endl;
 			return 1;
 		}
 	}
@@ -88,11 +88,11 @@ int DataBase::selectDataBase(string name, string zone, string password) {
 		strcpy(sentenceChar, sentenceStr.c_str());
 		int flag = mysql_query(&myCont, sentenceChar);
 		if (flag) {
-			printf("查询用户数据失败!\n");
+			cout << "查询用户数据失败!" << endl;
 			return 0;
 		}
 		else {
-			printf("查询用户数据成功!\n");
+			cout << "查询用户数据成功!" << endl;
 
 			result = mysql_store_result(&myCont);
 			if (result)
@@ -103,7 +103,7 @@ int DataBase::selectDataBase(string name, string zone, string password) {
 					return 1;
 				}
 				else {
-					printf("查无此人!\n");
+					cout << "查无此人!" << endl;
 					return 0;
 				}
 			}
@@ -131,11 +131,11 @@ int DataBase::selectBlackList(string name) {
 		strcpy(sentenceChar, sentenceStr.c_str());
 		int flag = mysql_query(&myCont, sentenceChar);
 		if (flag) {
-			printf("查询用户黑名单失败!\n");
+			cout << "查询用户黑名单失败!" << endl;
 			return 0;
 		}
 		else {
-			printf("查询用户黑名单成功!\n");
+			cout << "查询用户黑名单成功!" << endl;
 
 			result = mysql_store_result(&myCont);
 			if (result)
