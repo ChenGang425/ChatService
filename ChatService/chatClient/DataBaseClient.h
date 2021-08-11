@@ -23,6 +23,8 @@ private:
 
 public:
 	void selectOnlineClient();
+
+	void selectUserInf(string searchUserInf);
 };
 
 

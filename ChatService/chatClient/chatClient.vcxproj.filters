@@ -24,10 +24,10 @@
     <ClCompile Include="SignUp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test.cpp">
+    <ClCompile Include="DataBaseClient.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DataBaseClient.cpp">
+    <ClCompile Include="clientMain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

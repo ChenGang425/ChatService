@@ -1,19 +1,5 @@
-﻿#include <winsock2.h>
-#include <stdio.h>
-#pragma comment(lib,"ws2_32.lib")
-#include <windows.h>
-#include <list>
+﻿#include "server.h"
 
-#include "Comment.h"
-#include "DataBase.h"
-using namespace std;
-
-SOCKET cSocket[1024];
-
-list<SOCKET> clientCount;
-void communicat(int idx);
-list<SOCKET> oneZoneClient;
-list<SOCKET> twoZoneClient;
 
 int main()
 {
@@ -150,6 +136,7 @@ int main()
 }
 
 void communicat(int idx) {
+
 	//7 通信
 	char recvBuff[1024];
 	Session serverSession;
@@ -227,6 +214,20 @@ void communicat(int idx) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 void clientSignIn(int idx) {
 	// 服务器完成注册任务
 	char recvBuff[1024];
@@ -276,5 +277,6 @@ void clientSignUp(int idx) {
 		}
 	}
 }
+*/
 
 

@@ -35,10 +35,10 @@ int DataBase::insertDataBase(string name, string zone, string password) {
 		cout << "数据库连接失败！" << endl;
 		return 0;
 	}
-};
+}
 
 // 删
-void DataBase::deleteDataBase() {};
+void DataBase::deleteDataBase() {}
 
 // 改
 int DataBase::updateDataBase(string name, string status) {
@@ -68,7 +68,7 @@ int DataBase::updateDataBase(string name, string status) {
 		cout << "数据库连接失败！" << endl;
 		return 0;
 	}
-};
+}
 
 // 查
 int DataBase::selectDataBase(string name, string zone, string password) {
@@ -116,7 +116,7 @@ int DataBase::selectDataBase(string name, string zone, string password) {
 		cout << "数据库连接失败！" << endl;
 		return 0;
 	}
-};
+}
 
 // 查询该用户是否在黑名单
 int DataBase::selectBlackList(string name) {
