@@ -27,6 +27,7 @@ public:
 	void selectUserInf(string searchUserInf);
 
 	void updateBlackList(string blackListUser, string inOrOut);
+
 };
 
 

@@ -18,7 +18,7 @@ struct Msg
 struct Session
 {
 	char userName[20];
-	char clientChat[200];
+	char clientChat[800];
 	int zone;
 };
 #endif // _COMMENT_H_

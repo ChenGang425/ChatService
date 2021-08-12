@@ -6,15 +6,15 @@ void DataBaseClient::selectOnlineClient() {
 	if (mySqlConnect) {
 		string sentenceStr = "select * from chat_info_table where online_status = 1";
 
-		cout << sentenceStr;
+		//cout << sentenceStr;
 		char* sentenceChar = new char[sentenceStr.length() + 1];
 		strcpy(sentenceChar, sentenceStr.c_str());
 		int flag = mysql_query(&myCont, sentenceChar);
 		if (flag) {
-			cout << "查询在线用户失败!" << endl;
+			//cout << "查询在线用户失败!" << endl;
 		}
 		else {
-			cout << "查询在线用户成功!" << endl;
+			//cout << "查询在线用户成功!" << endl;
 
 			result = mysql_store_result(&myCont);
 			if (result)
@@ -28,7 +28,7 @@ void DataBaseClient::selectOnlineClient() {
 		}
 	}
 	else {
-		cout << "数据库连接失败！" << endl;
+		//cout << "数据库连接失败！" << endl;
 	}
 }
 
@@ -39,15 +39,15 @@ void DataBaseClient::selectUserInf(string searchUserInf) {
 	if (mySqlConnect) {
 		string sentenceStr = "select * from chat_info_table where name = '" + searchUserInf + "'";
 
-		cout << sentenceStr;
+		//cout << sentenceStr;
 		char* sentenceChar = new char[sentenceStr.length() + 1];
 		strcpy(sentenceChar, sentenceStr.c_str());
 		int flag = mysql_query(&myCont, sentenceChar);
 		if (flag) {
-			cout << "查询在线用户失败!" << endl;
+			//cout << "查询在线用户失败!" << endl;
 		}
 		else {
-			cout << "查询在线用户成功!" << endl;
+			//cout << "查询在线用户成功!" << endl;
 
 			result = mysql_store_result(&myCont);
 			if (result)
@@ -64,7 +64,7 @@ void DataBaseClient::selectUserInf(string searchUserInf) {
 		}
 	}
 	else {
-		cout << "数据库连接失败！" << endl;
+		//cout << "数据库连接失败！" << endl;
 	}
 }
 
@@ -74,19 +74,21 @@ void DataBaseClient::updateBlackList(string blackListUser, string inOrOut) {
 	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
 	if (mySqlConnect) {
 		string sentenceStr = "update chat_info_table set blacklist = " + inOrOut + " where name = '" + blackListUser + "'";
-		cout << sentenceStr;
+		//cout << sentenceStr;
 		char* sentenceChar = new char[sentenceStr.length() + 1];
 
 		strcpy(sentenceChar, sentenceStr.c_str());
 		int flag = mysql_query(&myCont, sentenceChar);
 		if (flag) {
-			cout << "更改黑名单状态失败!" << endl;
+			//cout << "更改黑名单状态失败!" << endl;
 		}
 		else {
-			cout << "更改黑名单状态成功!" << endl;
+			//cout << "更改黑名单状态成功!" << endl;
 		}
 	}
 	else {
-		cout << "数据库连接失败！" << endl;
+		//cout << "数据库连接失败！" << endl;
 	}
 }
+
+

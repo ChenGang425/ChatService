@@ -1,3 +1,2 @@
 ﻿  test.cpp
-e:\聊天系统\chatservice\chatservice\chatservice\test\test.cpp(43): error C2143: 语法错误: 缺少“;”(在“<<”的前面)
-e:\聊天系统\chatservice\chatservice\chatservice\test\test.cpp(43): error C4430: 缺少类型说明符 - 假定为 int。注意: C++ 不支持默认 int
+  test.vcxproj -> E:\聊天系统\chatService\ChatService\ChatService\x64\Debug\test.exe

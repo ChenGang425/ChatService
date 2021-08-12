@@ -38,6 +38,15 @@ public:
 	// 查询该用户是否在黑名单
 	int selectBlackList(string name);
 
+	// 查询该名称是否已被注册
+	int selectUserWhetherSignIn(string name);
+
+	// 查询在线用户
+	string selectOnlineClient();
+
+	// 查询玩家信息
+	string selectUserInf(string searchUserInf);
+
 };
 
 

@@ -83,15 +83,26 @@ int main()
 			// 复制recvBuff到recvMassage
 			memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
 
-			if (recvMassage.signInOrSignOut == 1) {
+			while (recvMassage.signInOrSignOut == 1) {
 				DataBase database;
+
 				int flag = database.insertDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
 				if (flag) {
 					send(cSocket[i], "注册成功！", sizeof("注册成功！"), 0);
+
 					// 清空结构体
 					memset(&recvMassage, 0, sizeof(recvMassage));
 					recv(cSocket[i], (char*)&recvMassage, sizeof(recvMassage), NULL);
 				}
+				else if (database.selectUserWhetherSignIn(recvMassage.userName)) {
+					send(cSocket[i], "该名称已被注册！", sizeof("该名称已被注册！"), 0);
+
+					// 清空结构体
+					memset(&recvMassage, 0, sizeof(recvMassage));
+					recv(cSocket[i], (char*)&recvMassage, sizeof(recvMassage), NULL);
+
+				}
+
 				else {
 					send(cSocket[i], "注册失败！", sizeof("注册失败！"), 0);
 					closesocket(cSocket[i]);
@@ -99,11 +110,19 @@ int main()
 				}
 			}
 
-			if (recvMassage.signInOrSignOut == 2) {
+			while (recvMassage.signInOrSignOut == 2) {
 				DataBase database;
+				
 				int flag = database.selectDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
-				if (flag && database.updateDataBase(recvMassage.userName, "1")) {
+				if (flag == 0) {
+					send(cSocket[i], "名称、大区或密码输入错误，请重新输入！", sizeof("名称、大区或密码输入错误，请重新输入！"), 0);
+					// 清空结构体
+					memset(&recvMassage, 0, sizeof(recvMassage));
+					recv(cSocket[i], (char*)&recvMassage, sizeof(recvMassage), NULL);
+				}
+				else if (flag && database.updateDataBase(recvMassage.userName, "1")) {
 					send(cSocket[i], "登录成功！", sizeof("登录成功！"), 0);
+
 
 					//通知所有客户端有新客户进来了
 					string newClientStr = "大家好，我进聊天室了，私聊号码为:" + to_string(i);
@@ -124,6 +143,7 @@ int main()
 					}
 
 					CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)communicat, (LPVOID)i, NULL, NULL);
+					break;
 				}
 				else {
 					send(cSocket[i], "登录失败！", sizeof("登录失败！"), 0);
@@ -156,8 +176,8 @@ void communicat(int idx) {
 
 			//判断用户是否要退出
 			if (strcmp(serverSession.clientChat, "EXIT") == 0) {
-				DataBase database;
-				database.updateDataBase(serverSession.userName, "0");
+
+				dataBase.updateDataBase(serverSession.userName, "0");
 
 				// 广播 发送给所有客户端该用户下线通知
 				string offlineStr(serverSession.userName);
@@ -178,8 +198,31 @@ void communicat(int idx) {
 				}
 			}
 
+			// 查询在线用户
+			else if (strcmp(serverSession.clientChat, "查询在线用户") == 0) {
+				string onlineClient = dataBase.selectOnlineClient();
+				strcpy(serverSession.clientChat, onlineClient.c_str());
+
+				send(cSocket[idx], (char*)&serverSession, sizeof(serverSession), 0);
+
+			}
+
+			// 查询玩家信息
+			else if (serverSession.clientChat[0] == '$') {
+				strcpy(serverSession.clientChat, serverSession.clientChat + 1);
+				string userName = serverSession.clientChat;
+				string userInfo = dataBase.selectUserInf(userName);
+				memset(serverSession.clientChat, 0, sizeof(serverSession.clientChat));
+				strcpy(serverSession.clientChat, userInfo.c_str());
+
+				send(cSocket[idx], (char*)&serverSession, sizeof(serverSession), 0);
+			}
+
+			// 设置黑名单
+
+
 			// 判断用户是否在黑名单上
-			if (dataBase.selectBlackList(serverSession.userName) == 1) {
+			else if (dataBase.selectBlackList(serverSession.userName) == 1) {
 
 				// 私聊
 				if (serverSession.clientChat[0] == '/') {

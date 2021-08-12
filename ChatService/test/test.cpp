@@ -39,8 +39,14 @@
 #include <iostream>
 using namespace std;
 
-char a[1024] = "注册成功！";
+int main() {
+	char a[1024] = "$1234";
+	strcpy(a, a + 1);
+	string b = a;;
+	cout << b << endl;
+}
 
-if (strcmp(a, "注册成功！")) {
 
- }
+
+
+

@@ -69,8 +69,6 @@ void Client::userSignIn() {
 		//发送
 		send(clientSocket, (char*)&massage, sizeof(massage), NULL);
 
-		cout << massage.userName << massage.password << massage.zone << endl;
-
 		int r;
 		r = recv(clientSocket, recvBuff, 1023, NULL);
 
@@ -79,6 +77,14 @@ void Client::userSignIn() {
 			cout << ">>" << recvBuff << endl;
 			if (strcmp(recvBuff, "注册成功！") == 0) {
 				signInOrSignOut = 2;
+			}
+			else if (strcmp(recvBuff, "该名称已被注册！") == 0) {
+				cout << "请重新选择名称或登录！" << endl;
+				cout << "1. 注册    " << "2. 登录" << endl;
+
+				cin >> signInOrSignOut;
+				if (signInOrSignOut == 1) continue;
+				else break;
 			}
 		}
 		else {
@@ -98,7 +104,7 @@ void Client::userSignUp() {
 		signUp.Login();
 		memcpy(&massage, &signUp.getMsg(), sizeof(signUp.getMsg()));
 
-		// 发送
+		//发送
 		send(clientSocket, (char*)&massage, sizeof(massage), NULL);
 
 		int r;
@@ -109,6 +115,9 @@ void Client::userSignUp() {
 			cout << ">> " << recvBuff << endl;
 			if (strcmp(recvBuff, "登录成功！") == 0) {
 				signInOrSignOut = 0;
+			}
+			else if (strcmp(recvBuff, "名称、大区或密码输入错误，请重新输入！") == 0) {
+				continue;
 			}
 		}
 		else {
@@ -130,21 +139,27 @@ void Client::communication() {
 		cout << "想要发大区请输入：# + 内容" << endl;
 		cout << "想查询在线用户请输入：查询在线用户" << endl;
 		cout << "想查询玩家信息请输入：查询玩家信息" << endl;
+
 		if (strcmp(clientSession.userName, "chengang") == 0) {
 			cout << "想管理黑名单请输入：设置黑名单" << endl;
 		}
 		cin >> clientSession.clientChat;
 
-		if (strcmp(clientSession.clientChat, "查询在线用户") == 0) {
-			dataBaseClient.selectOnlineClient();
-		}
+		//if (strcmp(clientSession.clientChat, "查询在线用户") == 0) {
+		//	dataBaseClient.selectOnlineClient();
+		//}
 
-		else if (strcmp(clientSession.clientChat, "查询玩家信息") == 0) {
+		if (strcmp(clientSession.clientChat, "查询玩家信息") == 0) {
 			string searchUserInf;
 			cout << "请输入想要查询的玩家名称：" << endl;
 			cin >> searchUserInf;
-			dataBaseClient.selectUserInf(searchUserInf);
+			searchUserInf = "$" + searchUserInf;
+			memset(clientSession.clientChat, 0, sizeof(clientSession.clientChat));
+			strcpy(clientSession.clientChat, searchUserInf.c_str());
+			send(clientSocket, (char *)&clientSession, sizeof(clientSession), NULL);
+			//dataBaseClient.selectUserInf(searchUserInf);
 		}
+
 		else if (strcmp(clientSession.clientChat, "设置黑名单") == 0 && 
 			strcmp(clientSession.userName, "chengang") == 0) {
 			string blackListUser;
@@ -154,6 +169,7 @@ void Client::communication() {
 			cout << "想要将他拉入还是黑名单还是拉出黑名单：" << endl;
 			cout << "0.拉出   " << "1. 拉入" << endl;
 			cin >> inOrOut;
+
 			dataBaseClient.updateBlackList(blackListUser, inOrOut);
 		}
 		else {

@@ -98,7 +98,7 @@ int DataBase::selectDataBase(string name, string zone, string password) {
 			if (result)
 			{
 				sql_row = mysql_fetch_row(result);
-				if ((sizeof(sql_row) / sizeof(sql_row[0])) == 1) {
+				if (sql_row != NULL) {
 					cout << "用户登录请求通过" << endl;
 					return 1;
 				}
@@ -159,6 +159,120 @@ int DataBase::selectBlackList(string name) {
 		cout << "数据库连接失败！" << endl;
 		return 0;
 	}
+}
+
+
+int DataBase::selectUserWhetherSignIn(string name) {
+	mysql_init(&myCont);
+	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
+	if (mySqlConnect) {
+		string sentenceStr = "select * from chat_info_table where name = '" + name + "'";
+
+		cout << sentenceStr;
+		char* sentenceChar = new char[sentenceStr.length() + 1];
+		strcpy(sentenceChar, sentenceStr.c_str());
+		int flag = mysql_query(&myCont, sentenceChar);
+		if (flag) {
+			cout << "查询是否已注册失败!" << endl;
+		}
+		else {
+			cout << "查询是否已注册成功!" << endl;
+
+			result = mysql_store_result(&myCont);
+			if (result)
+			{
+				sql_row = mysql_fetch_row(result);
+				if (sql_row != NULL) {
+					return 1;
+				}
+
+			}
+		}
+	}
+	else {
+		cout << "数据库连接失败！" << endl;
+	}
+	return 0;
+}
+
+
+// 查询在线用户
+string DataBase::selectOnlineClient() {
+	string onlineClient;
+	mysql_init(&myCont);
+	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
+	if (mySqlConnect) {
+		string sentenceStr = "select * from chat_info_table where online_status = 1";
+
+		cout << sentenceStr;
+		char* sentenceChar = new char[sentenceStr.length() + 1];
+		strcpy(sentenceChar, sentenceStr.c_str());
+		int flag = mysql_query(&myCont, sentenceChar);
+		if (flag) {
+			cout << "查询在线用户失败!" << endl;
+		}
+		else {
+			cout << "查询在线用户成功!" << endl;
+
+			result = mysql_store_result(&myCont);
+			if (result)
+			{
+				cout << "在线的用户有：" << endl;
+				while (sql_row = mysql_fetch_row(result))//获取具体的数据
+				{
+					cout << sql_row[1] << endl;
+					onlineClient = onlineClient + sql_row[1] + "\n";
+				}
+				return onlineClient;
+			}
+		}
+	}
+	else {
+		cout << "数据库连接失败！" << endl;
+	}
+	return NULL;
+}
+
+string DataBase::selectUserInf(string searchUserInf) {
+	string answer;
+	mysql_init(&myCont);
+	MYSQL * mySqlConnect = mysql_real_connect(&myCont, host.c_str(), user.c_str(), pswd.c_str(), table.c_str(), port, NULL, 0);
+	if (mySqlConnect) {
+		string sentenceStr = "select * from chat_info_table where name = '" + searchUserInf + "'";
+
+		cout << sentenceStr;
+		char* sentenceChar = new char[sentenceStr.length() + 1];
+		strcpy(sentenceChar, sentenceStr.c_str());
+		int flag = mysql_query(&myCont, sentenceChar);
+		if (flag) {
+			cout << "查询在线用户失败!" << endl;
+		}
+		else {
+			cout << "查询在线用户成功!" << endl;
+
+			result = mysql_store_result(&myCont);
+			if (result)
+			{
+				cout << searchUserInf << "的信息为：" << endl;
+				while (sql_row = mysql_fetch_row(result))//获取具体的数据
+				{
+					answer = answer + "玩家名称 : " + sql_row[1] + "\n";
+					cout << "玩家名称 : " << sql_row[1] << endl;
+					answer = answer + "所在大区 : " + sql_row[2] + "\n";
+					cout << "所在大区 : " << sql_row[2] << endl;
+					answer = answer + "注册时间 : " + sql_row[4] + "\n";
+					cout << "注册时间 : " << sql_row[4] << endl;
+					answer = answer + "在线状态 : " + sql_row[5] + "\n";
+					cout << "在线状态 : " << sql_row[5] << endl;
+				}
+				return answer;
+			}
+		}
+	}
+	else {
+		//cout << "数据库连接失败！" << endl;
+	}
+	return NULL;
 }
 
 

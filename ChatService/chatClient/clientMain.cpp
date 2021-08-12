@@ -39,7 +39,7 @@ void recvServerAndShow() {
 		r = recv(client.getClientSocket(), buff, 1023, NULL);
 		if (r > 0) {
 			memcpy(&clientSession, buff, sizeof(clientSession));
-			cout << clientSession.userName << ">>" << clientSession.clientChat << endl;
+			cout << clientSession.userName << ">>" << endl << clientSession.clientChat << endl;
 		}
 	}
 }
