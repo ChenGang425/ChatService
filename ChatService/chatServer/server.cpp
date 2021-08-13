@@ -199,7 +199,7 @@ void communicat(int idx) {
 			}
 
 			// 查询在线用户
-			else if (strcmp(serverSession.clientChat, "查询在线用户") == 0) {
+			else if (strcmp(serverSession.clientChat, "查询在线玩家列表") == 0) {
 				string onlineClient = dataBase.selectOnlineClient();
 				strcpy(serverSession.clientChat, onlineClient.c_str());
 
@@ -219,6 +219,12 @@ void communicat(int idx) {
 			}
 
 			// 设置黑名单
+			else if (serverSession.clientChat[0] == '^') {
+				string content = serverSession.clientChat;
+				string blackListUser = content.substr(1, content.length() - 2);
+				string inOrOut = content.substr(content.length() - 1, 1);
+				dataBase.updateBlackList(blackListUser, inOrOut);
+			}
 
 
 			// 判断用户是否在黑名单上
@@ -254,76 +260,5 @@ void communicat(int idx) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-void clientSignIn(int idx) {
-	// 服务器完成注册任务
-	char recvBuff[1024];
-	Msg recvMassage;
-
-	memset(&recvBuff, 0, sizeof(recvBuff));
-
-	if (recv(cSocket[idx], recvBuff, 1023, NULL)) {
-		memset(&recvMassage, 0, sizeof(recvMassage));//清空结构体
-		memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
-		if (recvMassage.signInOrSignOut == 1) {
-			DataBase database;
-			int flag = database.insertDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
-			if (flag) {
-				send(cSocket[idx], "注册成功！", sizeof("注册成功！"), 0);
-			}
-			else {
-				send(cSocket[idx], "注册失败！", sizeof("注册失败！"), 0);
-			}
-		}
-	}
-
-}
-
-void clientSignUp(int idx) {
-	// 服务器完成登录任务
-	char recvBuff[1024];
-	Msg recvMassage;
-
-	memset(&recvBuff, 0, sizeof(recvBuff));
-
-	int r;
-	r = recv(cSocket[idx], recvBuff, 1023, NULL);
-
-	if (r > 0) {
-		memset(&recvMassage, 0, sizeof(recvMassage));//清空结构体
-		memcpy(&recvMassage, recvBuff, sizeof(recvMassage));
-		if (recvMassage.signInOrSignOut == 2) {
-			DataBase database;
-			int flag = database.selectDataBase(recvMassage.userName, to_string(recvMassage.zone), recvMassage.password);
-			if (flag && database.updateDataBase(recvMassage.userName, "1")) {
-				send(cSocket[idx], "登录成功！", sizeof("登录成功！"), 0);
-			}
-			else {
-				send(cSocket[idx], "登录失败！", sizeof("登录失败！"), 0);
-			}
-		}
-	}
-}
-*/
 
 

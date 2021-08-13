@@ -40,9 +40,8 @@
 using namespace std;
 
 int main() {
-	char a[1024] = "$1234";
-	strcpy(a, a + 1);
-	string b = a;;
+	string a = "12345";
+	string b = a.substr(2, a.length() - 2);
 	cout << b << endl;
 }
 

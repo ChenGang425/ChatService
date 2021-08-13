@@ -24,9 +24,6 @@
     <ClCompile Include="SignUp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DataBaseClient.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="clientMain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -42,9 +39,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Client.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DataBaseClient.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

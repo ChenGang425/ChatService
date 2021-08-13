@@ -47,6 +47,9 @@ public:
 	// 查询玩家信息
 	string selectUserInf(string searchUserInf);
 
+	// 设置黑名单
+	void updateBlackList(string blackListUser, string inOrOut);
+
 };
 
 

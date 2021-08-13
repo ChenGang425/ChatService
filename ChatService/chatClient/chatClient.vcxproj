@@ -158,14 +158,12 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="clientMain.cpp" />
-    <ClCompile Include="DataBaseClient.cpp" />
     <ClCompile Include="SignIn.cpp" />
     <ClCompile Include="SignUp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
     <ClInclude Include="Comment.h" />
-    <ClInclude Include="DataBaseClient.h" />
     <ClInclude Include="SignIn.h" />
     <ClInclude Include="SignUp.h" />
   </ItemGroup>

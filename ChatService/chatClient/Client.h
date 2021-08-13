@@ -6,7 +6,7 @@
 #include "SignIn.h"
 #include "SignUp.h"
 #include "Comment.h"
-#include "DataBaseClient.h"
+
 
 using namespace std;
 
@@ -35,9 +35,6 @@ private:
 
 	// 用户socket
 	SOCKET clientSocket;
-
-	// 用户数据库
-	DataBaseClient dataBaseClient;
 
 public:
 
